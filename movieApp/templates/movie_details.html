@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .details {
+            margin: 20px 0;
+        }
+        .detail-item {
+            margin-bottom: 10px;
+        }
+        .link {
+            color: blue;
+            text-decoration: underline;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .submit-button, .dashboard-button, .viewmovies-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+        }
+        .submit-button:hover, .dashboard-button:hover, .viewmovies-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function redirectToDashboard() {
+            window.location.href = "/dashboard/";
+        }
+
+        function redirectToMovieList() {
+            window.location.href = "/movie_list/";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Movie Details</h1>
+        
+        <div class="details">
+            <div class="detail-item"><strong>Name:</strong> {{ name }}</div>
+            <div class="detail-item"><strong>Poster:</strong></div>
+            <img src="{{ poster }}" alt="Poster of {{ name }}">
+            <div class="detail-item"><strong>Description:</strong> {{ description }}</div>
+            <div class="detail-item"><strong>Release Date:</strong> {{ date }}</div>
+            <div class="detail-item"><strong>Cast:</strong> {{ cast }}</div>
+            <div class="detail-item"><strong>Rating:</strong> {{ rating }}</div>
+            <div class="detail-item"><strong>Category:</strong> {{ category }}</div>
+            <div class="detail-item"><strong>Links:</strong> <a href="{{ links }}" class="link">{{ links }}</a></div>
+        </div>
+
+        <div class="button-container">
+            <form action="/dashboard/" method="POST">
+                {% csrf_token %} 
+                <button type="submit" class="submit-button">Add New Movie</button>
+            </form>
+
+            <!-- Dashboard Button -->
+            <button class="dashboard-button" onclick="redirectToDashboard()">Dashboard</button>
+
+            <!-- View Movies Button -->
+            <button class="viewmovies-button" onclick="redirectToMovieList()">View Movies</button>
+        </div>
+    </div>
+</body>
+</html>

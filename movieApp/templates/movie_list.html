@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie List</title>
+    <style>
+        /* Basic styling for the buttons */
+        .submit-button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px; /* Space between buttons */
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styling for the dashboard button */
+        .dashboard-button {
+            position: fixed; /* Fixes the position */
+            bottom: 20px; /* Distance from the bottom */
+            right: 20px; /* Distance from the right */
+            padding: 10px 20px;
+            background-color: #28a745; /* Green color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dashboard-button:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        /* Styling for movie links */
+        .movie-link {
+            text-decoration: none; /* Remove underline from links */
+            color: #007BFF; /* Link color */
+            font-weight: bold; /* Bold text */
+        }
+
+        .movie-link:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        /* Styles for the search bar and category dropdown */
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px; /* Space between search bar and dropdown */
+        }
+
+        #categoryDropdown {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .highlight {
+            background-color: yellow; /* Highlight color */
+        }
+
+        .hidden {
+            display: none; /* Hides the element */
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie List</h1>
+
+    <div class="header">
+        <input type="text" placeholder="Search movies..." class="search-bar" oninput="filterMovies()">
+        <select id="categoryDropdown" onchange="filterMovies()">
+            <option value="">Select Category</option>
+            <option value="Comedy">Comedy</option>
+            <option value="Horror">Horror</option>
+            <option value="Action">Action</option>
+            <option value="Thriller">Thriller</option>
+            <option value="Drama">Drama</option>
+        </select>
+    </div>
+
+    <ul id="movieList">
+        {% for movie in movies %}
+            <li class="movie-item" data-category="{{ movie.category }}">
+                <form action="{% url 'movies' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="movie_name" value="{{ movie.name }}">
+                    <a href="javascript:void(0);" class="movie-link" onclick="this.closest('form').submit();">{{ movie.name }}</a>
+                </form>
+            </li>
+        {% empty %}
+            <li>No movies found.</li>
+        {% endfor %}
+    </ul>
+
+    <form action="/dashboard/" method="POST">
+        {% csrf_token %} 
+        <button type="submit" class="submit-button">Add New Movie</button>
+    </form>
+    <button class="dashboard-button" onclick="redirectToDashboard()">Dashboard</button>
+    
+    <script>
+        function redirectToDashboard() {
+            window.location.href = "/dashboard/"; 
+        }
+
+        function filterMovies() {
+            const searchQuery = document.querySelector('.search-bar').value.toLowerCase();
+            const selectedCategory = document.getElementById('categoryDropdown').value;
+            const movieItems = document.querySelectorAll('.movie-item');
+
+            movieItems.forEach(item => {
+                const movieName = item.querySelector('.movie-link').innerText.toLowerCase();
+                const movieCategory = item.getAttribute('data-category');
+
+                const matchesSearch = movieName.includes(searchQuery);
+                const matchesCategory = selectedCategory === "" || movieCategory === selectedCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    item.classList.remove('hidden'); // Show matched movie
+                    item.classList.add('highlight'); // Highlight matched movie
+                } else {
+                    item.classList.add('hidden'); // Hide unhighlighted movie
+                    item.classList.remove('highlight'); // Remove highlight
+                }
+            });
+        }
+    </script>
+</body>
+</html>
